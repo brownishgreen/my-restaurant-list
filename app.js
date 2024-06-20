@@ -9,19 +9,22 @@ app.engine('.hbs', engine({ extname: '.hbs' }))
 app.set('view engine', '.hbs')
 app.set('views', './views')
 
-app.use(express.static('public'))
+//使用public內的靜態資料
+app.use(express.static('public')) 
 
+//重新導向/restaurants介面
 app.get('/', (req, res) => {
   res.redirect('/restaurants')
 })
-
+//
 app.get('/my-restaurant-list', (req, res) => {
-  res.render('index',{ restaurants})
+  res.render('index',{ restaurants })
 })
 
-app.get('/my-restaurant-list/:id', (req, res) => {
+app.get('/restaurants/:id', (req, res) => {
   const id = req.params.id
-  res.send(`read restaurant: ${id}`)
+  const restaurant = restaurants.find((restaurant) => restaurant.id.toString() === id)
+  res.render('show', { restaurant } )
 })
 
 app.listen(port, () => {
