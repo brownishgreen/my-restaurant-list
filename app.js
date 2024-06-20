@@ -14,14 +14,23 @@ app.use(express.static('public'))
 
 //重新導向/restaurants介面
 app.get('/', (req, res) => {
-  res.redirect('/restaurants')
+  res.redirect('/my-restaurant-list')
 })
-//
+//渲染 restaurants list
 app.get('/my-restaurant-list', (req, res) => {
-  res.render('index',{ restaurants })
+  const keyword = req.query.keyword?.trim().toLowerCase()
+  const matchedRestaurants = keyword ? restaurants.filter(restaurant =>
+    Object.values(restaurant).some(property => {
+      if (typeof property === 'string') {
+      return property.toLowerCase().includes(keyword.toLowerCase())
+      }
+      return false
+    })
+  ):restaurants
+  res.render('index', { restaurants: matchedRestaurants, keyword })
 })
 
-app.get('/restaurants/:id', (req, res) => {
+app.get('/my-restaurant-list/:id', (req, res) => {
   const id = req.params.id
   const restaurant = restaurants.find((restaurant) => restaurant.id.toString() === id)
   res.render('show', { restaurant } )
